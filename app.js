@@ -838,12 +838,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // System prompt instructs model to be concise to save tokens/credits
         const systemPrompt = `You are a wise and compassionate Christian Bible mentor. Provide a response to the user's question. The response MUST be styled in ${toneStr}. Write in the language code: ${lang}. 
-**CRITICAL LIMIT**: Be extremely concise and to the point. Focus strictly on scripture and practical application. Do not exceed 250 words total. Provide 1-2 relevant scripture citations maximum.`;
+**CRITICAL LIMIT**: Be concise. Focus strictly on scripture and practical application. Do not exceed 250 words total. Provide 1-2 relevant scripture citations maximum. Ensure the response is fully completed and does not end mid-sentence.`;
 
         toggleLoader(true, 'loaderText');
         try {
-            // maxTokens is set to 600 to minimize generated response length (saving credits)
-            const answerText = await fetchGeminiAIResponse(systemPrompt, question, 600);
+            // maxTokens is set higher for non-English to prevent truncation (since non-English characters consume more tokens)
+            const maxTokens = lang === 'en-US' ? 800 : 1600;
+            const answerText = await fetchGeminiAIResponse(systemPrompt, question, maxTokens);
             
             saveToHistory('bibleSearch', { question, answer: answerText, date: new Date().toLocaleDateString() });
             toggleLoader(false);
@@ -897,9 +898,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Limit the outline content size to keep tokens under 700
+        // Limit the outline content size to keep tokens under control
         const systemPrompt = `You are a homiletics professor. Generate a detailed, inspiring sermon outline based on: "${topic}". Write in the language code: ${lang}. 
-**CRITICAL**: Keep the outline clean, structured and highly concise. Do not write full paragraphs. Limit the total outline to under 300 words.
+**CRITICAL**: Keep the outline clean, structured and concise. Do not write full paragraphs. Limit the total outline to under 300 words. Ensure the response is fully completed and does not end mid-sentence.
 Structure:
 1. Title
 2. Scripture
@@ -910,7 +911,8 @@ Structure:
 
         toggleLoader(true, 'loaderSermon');
         try {
-            const outlineText = await fetchGeminiAIResponse(systemPrompt, topic, 800);
+            const maxTokens = lang === 'en-US' ? 1000 : 2000;
+            const outlineText = await fetchGeminiAIResponse(systemPrompt, topic, maxTokens);
             
             saveToHistory('sermon', { topic, outline: outlineText, date: new Date().toLocaleDateString() });
             toggleLoader(false);
@@ -959,12 +961,13 @@ Structure:
         }
 
         const systemPrompt = `You are a Christian worship songwriter. Write a brief worship song with chord symbols written inline. Write in: ${lang}.
-**LIMIT**: Keep it brief. Do not write duplicate choruses—simply use [Repeat Chorus]. Limit response to 250 words total.
+**LIMIT**: Keep it brief. Do not write duplicate choruses—simply use [Repeat Chorus]. Limit response to 250 words total. Ensure the response is fully completed and does not end mid-sentence.
 Structure: Verse 1, Chorus, Verse 2, Bridge, Chorus/Outro.`;
 
         toggleLoader(true, 'loaderLyrics');
         try {
-            const songText = await fetchGeminiAIResponse(systemPrompt, description, 700);
+            const maxTokens = lang === 'en-US' ? 1000 : 2000;
+            const songText = await fetchGeminiAIResponse(systemPrompt, description, maxTokens);
             
             saveToHistory('songwriter', { description, song: songText, date: new Date().toLocaleDateString() });
             toggleLoader(false);
@@ -1024,11 +1027,12 @@ Structure: Verse 1, Chorus, Verse 2, Bridge, Chorus/Outro.`;
         }
         
         const systemPrompt = `You are a missionary historian. Provide a brief, inspiring biography of the requested missionary. Write in: ${lang}.
-**LIMIT**: Do not exceed 250 words. Focus on: Life dates, country of service, key hardships, and legacy. Use markdown.`;
+**LIMIT**: Do not exceed 255 words. Focus on: Life dates, country of service, key hardships, and legacy. Use markdown. Ensure the response is fully completed and does not end mid-sentence.`;
 
         toggleLoader(true, 'loaderBio');
         try {
-            const bioText = await fetchGeminiAIResponse(systemPrompt, query, 600);
+            const maxTokens = lang === 'en-US' ? 800 : 1600;
+            const bioText = await fetchGeminiAIResponse(systemPrompt, query, maxTokens);
             
             saveToHistory('missionary', { query, bio: bioText, date: new Date().toLocaleDateString() });
             toggleLoader(false);
@@ -1077,11 +1081,12 @@ Structure: Verse 1, Chorus, Verse 2, Bridge, Chorus/Outro.`;
         }
 
         const systemPrompt = `You are a pastoral biblical counselor. Provide comfort, wisdom, and scriptural guidance for: "${situation}". Write in: ${lang}. 
-**CRITICAL TOKEN LIMIT**: Keep your counseling brief. Do not exceed 250 words total. Provide 2-3 scriptural verses and a 2-sentence closing prayer.`;
+**CRITICAL TOKEN LIMIT**: Keep your counseling brief. Do not exceed 250 words total. Provide 2-3 scriptural verses and a 2-sentence closing prayer. Ensure the response is fully completed and does not end mid-sentence.`;
 
         toggleLoader(true, 'loaderGuidance');
         try {
-            const guidanceText = await fetchGeminiAIResponse(systemPrompt, situation, 600);
+            const maxTokens = lang === 'en-US' ? 800 : 1600;
+            const guidanceText = await fetchGeminiAIResponse(systemPrompt, situation, maxTokens);
             
             saveToHistory('lifeSituation', { situation, guidance: guidanceText, date: new Date().toLocaleDateString() });
             toggleLoader(false);
@@ -1547,10 +1552,11 @@ Structure: Verse 1, Chorus, Verse 2, Bridge, Chorus/Outro.`;
 
         const lang = appState.language;
         const systemPrompt = `You are a biblical counselor and mentor. Write a brief profile for a believer whose spiritual assessment shows their primary gift is: "${traitName}" (${traitKey}). Write in the language code: ${lang}. 
-**CRITICAL TOKEN LIMIT**: Do not exceed 250 words total. Provide 1 bible character example, 2 development steps, and 1 scripture quote.`;
+**CRITICAL TOKEN LIMIT**: Do not exceed 250 words total. Provide 1 bible character example, 2 development steps, and 1 scripture quote. Ensure the response is fully completed and does not end mid-sentence.`;
 
         try {
-            const aiText = await fetchGeminiAIResponse(systemPrompt, `Primary Gift: ${traitName} (${traitKey})`, 600);
+            const maxTokens = lang === 'en-US' ? 800 : 1600;
+            const aiText = await fetchGeminiAIResponse(systemPrompt, `Primary Gift: ${traitName} (${traitKey})`, maxTokens);
             textContainer.innerHTML = parseMarkdownToHTML(aiText);
             showToast("AI Custom profile loaded!");
         } catch (error) {
