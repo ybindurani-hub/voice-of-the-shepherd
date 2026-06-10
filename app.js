@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         language: localStorage.getItem('vos_language') || 'en-US',
         apiKey: localStorage.getItem('vos_api_key') || '',
         defaultApiKey: '',
+        geminiModel: localStorage.getItem('vos_gemini_model') || 'gemini-2.0-flash',
         theme: localStorage.getItem('theme') || 'light',
         challengeCompleted: localStorage.getItem('vos_challenge_completed') === new Date().toDateString(),
         
@@ -168,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         settingsModal: document.getElementById('settings-modal'),
         closeSettingsBtn: document.getElementById('close-settings-btn'),
         settingsApiKey: document.getElementById('settings-api-key'),
+        settingsModel: document.getElementById('settings-model'),
         saveApiKeyBtn: document.getElementById('save-api-key-btn'),
         resetApiKeyBtn: document.getElementById('reset-api-key-btn'),
         
@@ -210,8 +212,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Register Global Event Listeners
         registerGlobalListeners();
         
-        // Load API key placeholder
+        // Load API key placeholder and model selector value
         elements.settingsApiKey.value = appState.apiKey;
+        if (elements.settingsModel) {
+            elements.settingsModel.value = appState.geminiModel;
+        }
 
         // Auto-open settings modal if API key is not yet set
         if (!appState.apiKey || appState.apiKey === "") {
@@ -513,6 +518,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             appState.apiKey = keyVal;
             localStorage.setItem('vos_api_key', keyVal);
+            
+            if (elements.settingsModel) {
+                const modelVal = elements.settingsModel.value;
+                appState.geminiModel = modelVal;
+                localStorage.setItem('vos_gemini_model', modelVal);
+            }
+            
             elements.settingsModal.classList.add('hidden');
             showToast("Gemini API settings saved!");
         });
@@ -521,7 +533,14 @@ document.addEventListener('DOMContentLoaded', () => {
             appState.apiKey = appState.defaultApiKey;
             localStorage.setItem('vos_api_key', appState.defaultApiKey);
             elements.settingsApiKey.value = appState.defaultApiKey;
-            showToast("Reset to default key");
+            
+            appState.geminiModel = 'gemini-2.0-flash';
+            localStorage.setItem('vos_gemini_model', 'gemini-2.0-flash');
+            if (elements.settingsModel) {
+                elements.settingsModel.value = 'gemini-2.0-flash';
+            }
+            
+            showToast("Reset to default settings");
         });
 
         elements.backToHubBtn.addEventListener('click', () => showView(null));
@@ -699,7 +718,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- GEMINI API CALLS AND RENDERING ---
     async function fetchGeminiAIResponse(systemPrompt, userPrompt, maxTokens = 800) {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${appState.apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${appState.geminiModel}:generateContent?key=${appState.apiKey}`;
         
         const requestBody = {
             contents: [
@@ -817,8 +836,10 @@ document.addEventListener('DOMContentLoaded', () => {
             errorMsg = "The current Gemini API Key is invalid or expired. Click the settings ⚙️ icon in the header to enter a valid API key.";
         } else if (errorMsg.includes("quota exceeded") || errorMsg.includes("Resource has been exhausted")) {
             errorMsg = "API quota exceeded. Please provide your own Gemini key in the settings ⚙️ menu to continue.";
+        } else if (errorMsg.includes("high demand") || errorMsg.includes("temporary") || errorMsg.includes("overloaded") || errorMsg.includes("503") || errorMsg.includes("429")) {
+            errorMsg = `The selected Gemini model is currently experiencing high demand. Please click the settings ⚙️ icon to choose a different model (e.g., Gemini 2.0 Flash) or try again in a few moments.`;
         } else {
-            errorMsg = `Error: ${error.message}. Please verify your network connection and API key settings.`;
+            errorMsg = `Error: ${error.message}. Please verify your network connection, API key, or try selecting a different Gemini model in settings ⚙️.`;
         }
         alert(errorMsg);
         elements.settingsModal.classList.remove('hidden');
