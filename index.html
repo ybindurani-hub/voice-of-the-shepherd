@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice of the Shepherd - AI Bible Mentor</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        shepherd: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            200: '#bae0fd',
+                            300: '#7cc8fc',
+                            400: '#38abf8',
+                            500: '#0e90e9',
+                            600: '#0273c5',
+                            700: '#035ca1',
+                            800: '#074e85',
+                            900: '#0c426e',
+                            950: '#082a4a',
+                        },
+                        amberAccent: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            200: '#fde68a',
+                            300: '#fcd34d',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                            900: '#78350f',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Noto+Sans+Devanagari:wght@400;700&family=Noto+Sans+Tamil:wght@400;700&family=Noto+Sans+Telugu:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // Prevent FOUC (Flash of Unstyled Content) by adding dark class immediately
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300 font-sans antialiased">
+
+    <!-- Global App Wrapper -->
+    <div class="container mx-auto p-4 sm:p-6 md:p-8 max-w-3xl">
+        
+        <!-- Header -->
+        <header class="header-gradient text-white text-center mb-6 p-6 sm:p-8 rounded-3xl shadow-xl relative overflow-hidden border border-white/10">
+            <!-- Decorative light bursts -->
+            <div class="absolute -top-12 -left-12 w-32 h-32 bg-sky-400/30 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-12 -right-12 w-32 h-32 bg-amber-400/20 rounded-full blur-2xl"></div>
+
+            <div class="relative z-10">
+                <span class="text-xs font-semibold tracking-widest text-sky-200 uppercase mb-2 block" data-translate-key="subHeaderTitle">Your Spiritual Companion</span>
+                <h1 class="main-title text-4xl sm:text-5xl font-extrabold tracking-tight" data-translate-key="mainTitle">Voice of the Shepherd</h1>
+                <p class="text-sm text-sky-100/80 mt-2 max-w-md mx-auto" data-translate-key="appSubtitle">AI Bible Mentorship, Devotionals, Sermon Assistance & Worship songwriting</p>
+            </div>
+
+            <!-- Header Controls (Dark Mode & Settings) -->
+            <div class="absolute top-4 right-4 flex items-center gap-2 z-20">
+                <!-- API Settings Button -->
+                <button id="settings-btn" class="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-all text-white active:scale-95" title="API Key Settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5.5 h-5.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 010 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.43l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 010-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </button>
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="p-2.5 rounded-full bg-white/10 hover:bg-white/20 transition-all text-white active:scale-95" title="Toggle Dark Mode">
+                    <!-- Moon (dark mode) icon -->
+                    <svg id="theme-toggle-dark-icon" class="w-5.5 h-5.5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <!-- Sun (light mode) icon -->
+                    <svg id="theme-toggle-light-icon" class="w-5.5 h-5.5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zM3 11a1 1 0 100-2H2a1 1 0 100 2h1zM6.465 14.95l-.708.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Card Wrapper -->
+        <main class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-800 p-6 sm:p-8 transition-all duration-300 relative">
+            
+            <!-- Home Screen View -->
+            <div id="home-view" class="app-view space-y-8">
+                
+                <!-- Missionary of the Week Card -->
+                <div class="missionary-card p-6 rounded-2xl relative overflow-hidden border border-amber-500/10 transition-all">
+                    <!-- Ambient gold glow -->
+                    <div class="absolute -right-16 -bottom-16 w-36 h-36 bg-amber-400/10 rounded-full blur-2xl"></div>
+                    
+                    <div class="flex flex-col md:flex-row gap-5 items-start relative z-10">
+                        <!-- Missionary Image Placeholder/Generated -->
+                        <div class="w-full md:w-28 h-28 bg-gradient-to-br from-amber-100 to-amber-200 dark:from-amber-950 dark:to-slate-800 rounded-xl overflow-hidden shadow-md border border-amber-500/20 flex items-center justify-center shrink-0">
+                            <span class="text-4xl">⛪</span>
+                        </div>
+                        
+                        <div class="flex-grow space-y-1">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-700 dark:text-amber-300 uppercase tracking-wider" data-translate-key="missionaryOfTheWeek">
+                                📜 Missionary of the Week
+                            </span>
+                            <h3 id="missionary-name" class="main-title text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1">Hudson Taylor</h3>
+                            <p id="missionary-quote" class="text-sm italic text-slate-600 dark:text-slate-300 mt-1">"God's work done in God's way will never lack God's supplies."</p>
+                            
+                            <div class="pt-2">
+                                <button id="missionary-week-btn" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-xs font-bold py-1.5 px-4 rounded-full transition-all shadow-sm" data-translate-key="readBio">
+                                    Read Biography &rarr;
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tools Navigation Grid -->
+                <div class="space-y-4">
+                    <h2 class="main-title text-2xl font-extrabold text-slate-800 dark:text-slate-100 text-center tracking-tight" data-translate-key="allTools">
+                        Explore Spiritual Tools
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        
+                        <!-- Bible Search -->
+                        <button data-view="ask-question-view" class="feature-card flex flex-col items-center p-5 rounded-2xl border text-center transition-all group">
+                            <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl text-emerald-500 dark:text-emerald-400 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                </svg>
+                            </div>
+                            <p class="mt-3 text-sm font-bold text-slate-700 dark:text-slate-200" data-translate-key="bibleSearch">Bible Search</p>
+                            <p class="text-[11px] text-slate-400 dark:text-slate-400 mt-1 leading-normal hidden sm:block">Ask any biblical questions</p>
+                        </button>
+
+                        <!-- Missionary Bio -->
+                        <button data-view="missionary-view" class="feature-card flex flex-col items-center p-5 rounded-2xl border text-center transition-all group">
+                            <div class="p-3 bg-teal-50 dark:bg-teal-950/40 rounded-xl text-teal-500 dark:text-teal-400 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21V3M12 3a9.004 9.004 0 00-8.716 6.747M12 3c4.805 0 8.716 2.986 8.716 6.747M3.284 14.251L21 9.75M3.284 9.75L21 14.25" />
+                                </svg>
+                            </div>
+                            <p class="mt-3 text-sm font-bold text-slate-700 dark:text-slate-200" data-translate-key="missionaryBio">Missionary Bio</p>
+                            <p class="text-[11px] text-slate-400 dark:text-slate-400 mt-1 leading-normal hidden sm:block">Heroes of Christian faith</p>
+                        </button>
+
+                        <!-- Bible Quiz -->
+                        <button data-view="quiz-view" class="feature-card flex flex-col items-center p-5 rounded-2xl border text-center transition-all group">
+                            <div class="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl text-amber-500 dark:text-amber-400 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                                </svg>
+                            </div>
+                            <p class="mt-3 text-sm font-bold text-slate-700 dark:text-slate-200" data-translate-key="bibleQuiz">Bible Quiz</p>
+                            <p class="text-[11px] text-slate-400 dark:text-slate-400 mt-1 leading-normal hidden sm:block">Test scripture knowledge</p>
+                        </button>
+
+                        <!-- Find Calling -->
+                        <button data-view="calling-view" class="feature-card flex flex-col items-center p-5 rounded-2xl border text-center transition-all group">
+                            <div class="p-3 bg-indigo-50 dark:bg-indigo-950/40 rounded-xl text-indigo-500 dark:text-indigo-400 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                                </svg>
+                            </div>
+                            <p class="mt-3 text-sm font-bold text-slate-700 dark:text-slate-200" data-translate-key="findYourCalling">Find Calling</p>
+                            <p class="text-[11px] text-slate-400 dark:text-slate-400 mt-1 leading-normal hidden sm:block">Identify spiritual gifts</p>
+                        </button>
+
+                        <!-- Sermon Builder -->
+                        <button data-view="sermon-builder-view" class="feature-card flex flex-col items-center p-5 rounded-2xl border text-center transition-all group">
+                            <div class="p-3 bg-sky-50 dark:bg-sky-950/40 rounded-xl text-sky-500 dark:text-sky-400 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                </svg>
+                            </div>
+                            <p class="mt-3 text-sm font-bold text-slate-700 dark:text-slate-200" data-translate-key="sermonBuilder">Sermon Builder</p>
+                            <p class="text-[11px] text-slate-400 dark:text-slate-400 mt-1 leading-normal hidden sm:block">Create inspiring outlines</p>
+                        </button>
+
+                        <!-- Songwriter -->
+                        <button data-view="songwriter-view" class="feature-card flex flex-col items-center p-5 rounded-2xl border text-center transition-all group">
+                            <div class="p-3 bg-rose-50 dark:bg-rose-950/40 rounded-xl text-rose-500 dark:text-rose-400 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V7.5A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.75m0 12.553v-3.75a2.25 2.25 0 011.632-2.163l1.32-.377a1.803 1.803 0 01.99 3.467l-2.31.66A2.25 2.25 0 009 18.25v.75M18 7.5l-6 3m0 0l-6-3m6 3v6l-6-3m6 3l6-3" />
+                                </svg>
+                            </div>
+                            <p class="mt-3 text-sm font-bold text-slate-700 dark:text-slate-200" data-translate-key="songwriter">Songwriter</p>
+                            <p class="text-[11px] text-slate-400 dark:text-slate-400 mt-1 leading-normal hidden sm:block">Write worship lyrics</p>
+                        </button>
+
+                        <!-- Life Situation -->
+                        <button data-view="life-situation-view" class="feature-card flex flex-col items-center p-5 rounded-2xl border text-center transition-all group col-span-2 md:col-span-3">
+                            <div class="p-3 bg-purple-50 dark:bg-purple-950/40 rounded-xl text-purple-500 dark:text-purple-400 group-hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                </svg>
+                            </div>
+                            <p class="mt-3 text-sm font-bold text-slate-700 dark:text-slate-200" data-translate-key="lifeSituation">Life Situation Guidance</p>
+                            <p class="text-[11px] text-slate-400 dark:text-slate-400 mt-1 leading-normal hidden sm:block">Biblical counsel for emotional, relational, and spiritual struggles</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Daily Challenge Section -->
+                <div class="daily-challenge-card p-6 rounded-2xl border border-indigo-500/10 transition-all flex flex-col md:flex-row gap-4 justify-between items-start md:items-center relative overflow-hidden bg-indigo-500/5 dark:bg-indigo-900/10">
+                    <div class="space-y-2 relative z-10 max-w-xl">
+                        <span class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest" data-translate-key="dailyChallenge">
+                            ⚡ Daily Challenge
+                        </span>
+                        <!-- Quote and Verse dynamic placement -->
+                        <div id="daily-verse" class="text-sm font-medium text-slate-700 dark:text-slate-200 italic leading-relaxed">
+                            "Thy word is a lamp unto my feet, and a light unto my path." — Psalm 119:105
+                        </div>
+                        <div id="daily-task" class="text-sm text-slate-600 dark:text-slate-300 font-semibold flex items-center gap-2">
+                            <span>Challenge: Spend 5 minutes praying for someone in need today.</span>
+                        </div>
+                    </div>
+                    <!-- Completion Toggle -->
+                    <button id="challenge-complete-btn" class="shrink-0 inline-flex items-center gap-2 bg-indigo-500 hover:bg-indigo-600 active:scale-95 text-white text-xs font-bold py-2.5 px-5 rounded-xl transition-all shadow-md">
+                        <span id="challenge-btn-icon">⬜</span>
+                        <span id="challenge-btn-text" data-translate-key="markComplete">Mark Complete</span>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Other Views Container -->
+            <div id="app-views-container" class="hidden space-y-6">
+                <!-- Common Back Button -->
+                <button class="back-to-hub-btn flex items-center gap-2 text-shepherd-600 dark:text-shepherd-400 hover:bg-shepherd-100/50 dark:hover:bg-shepherd-900/50 py-2 px-4 rounded-xl text-sm font-bold transition-all border border-shepherd-100 dark:border-shepherd-900/50 w-fit active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                    <span data-translate-key="backToHome">Back to Home</span>
+                </button>
+                
+                <!-- Subviews (loaded on demand from templates) -->
+                <div id="ask-question-view" class="app-view bg-white dark:bg-slate-900 rounded-2xl"></div>
+                <div id="sermon-builder-view" class="app-view bg-white dark:bg-slate-900 rounded-2xl"></div>
+                <div id="quiz-view" class="app-view bg-white dark:bg-slate-900 rounded-2xl"></div>
+                <div id="songwriter-view" class="app-view bg-white dark:bg-slate-900 rounded-2xl"></div>
+                <div id="missionary-view" class="app-view bg-white dark:bg-slate-900 rounded-2xl"></div>
+                <div id="calling-view" class="app-view bg-white dark:bg-slate-900 rounded-2xl"></div>
+                <div id="life-situation-view" class="app-view bg-white dark:bg-slate-900 rounded-2xl"></div>
+            </div>
+
+            <!-- Global Loader for AI requests -->
+            <div id="global-loader" class="hidden absolute inset-0 bg-white/70 dark:bg-slate-900/80 backdrop-blur-sm z-40 rounded-3xl flex flex-col items-center justify-center p-8 transition-opacity duration-300">
+                <div class="loader-pulse w-16 h-16 rounded-full bg-shepherd-500/20 flex items-center justify-center border border-shepherd-500/40 shadow-inner">
+                    <svg class="animate-spin h-8 w-8 text-shepherd-600 dark:text-shepherd-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+                <p class="text-sm font-semibold text-slate-700 dark:text-slate-200 mt-4 animate-pulse" data-translate-key="loaderText">Seeking spiritual wisdom...</p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center mt-8 text-slate-400 dark:text-slate-600 text-xs space-y-1">
+            <p>&copy; 2026 Voice of the Shepherd. All rights reserved.</p>
+            <p class="font-medium">Founding Mentor: Dr. Sam Hutson Wallace</p>
+        </footer>
+
+        <!-- Toast Notifications -->
+        <div id="notification" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-950 text-xs sm:text-sm font-semibold py-3 px-6 rounded-2xl shadow-xl z-50 border border-slate-700/50 dark:border-slate-300/50 transition-all duration-300"></div>
+
+        <!-- Global History Modal -->
+        <div id="history-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-sm">
+            <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 flex flex-col max-h-[80vh] relative animate-fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 main-title" data-translate-key="historyTitle">📜 Search History</h3>
+                    <button id="close-history-btn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div id="history-list" class="flex-grow overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800 pr-1 space-y-1">
+                    <!-- Loaded dynamically -->
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between gap-3">
+                    <button id="clear-history-btn" class="bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs py-2 px-4 rounded-xl transition active:scale-95 flex-grow" data-translate-key="clearAllHistory">Clear All History</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Settings Modal -->
+        <div id="settings-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-sm animate-fade-in">
+            <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 relative">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 main-title">⚙️ API Settings</h3>
+                    <button id="close-settings-btn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <p class="text-xs text-slate-500 dark:text-slate-400 leading-normal">
+                    This application uses the Gemini 2.5 Flash API for natural language assistance. We pre-configured a default API key. If you reach quota limits or want to use your own, paste it below. It remains stored strictly in your browser's local storage.
+                </p>
+
+                <div class="space-y-1">
+                    <label for="settings-api-key" class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Gemini API Key</label>
+                    <input type="password" id="settings-api-key" class="w-full p-2.5 border border-slate-200 dark:border-slate-800 rounded-xl text-xs bg-slate-50 dark:bg-slate-850 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-shepherd-500 transition" placeholder="Paste Gemini API Key here...">
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <button id="reset-api-key-btn" class="bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-700 dark:text-slate-300 font-bold text-xs py-2 px-4 rounded-xl transition active:scale-95">Reset Default</button>
+                    <button id="save-api-key-btn" class="bg-shepherd-600 hover:bg-shepherd-700 text-white font-bold text-xs py-2 px-5 rounded-xl transition active:scale-95 shadow-md shadow-shepherd-500/20">Save Settings</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- VIEW TEMPLATES -->
+    
+    <!-- 1. Bible Search View Template -->
+    <template id="ask-question-template">
+        <div class="space-y-5 p-1">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-4">
+                <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 main-title" data-translate-key="bibleSearch">Bible Search</h2>
+                <button class="history-btn flex items-center gap-1.5 text-xs font-bold text-shepherd-600 dark:text-shepherd-400 hover:underline active:scale-95" data-tool="bibleSearch">
+                    <span data-translate-key="historyButton">📜 Search History</span>
+                </button>
+            </div>
+            
+            <div class="space-y-2">
+                <label for="question" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="yourQuestion">Your bible study question:</label>
+                <div class="relative">
+                    <textarea id="question" rows="3" class="w-full p-3 pr-12 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm bg-slate-50 dark:bg-slate-850 text-slate-850 dark:text-slate-150 focus:outline-none focus:ring-2 focus:ring-shepherd-500 transition leading-relaxed" placeholder="e.g., What does the Bible say about finding peace in times of trouble?"></textarea>
+                    <button id="mic-question" class="mic-btn absolute top-3 right-3 p-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-full transition active:scale-90" title="Voice Input">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                            <path d="M8.25 4.5a3.75 3.75 0 117.5 0v8.25a3.75 3.75 0 11-7.5 0V4.5z" />
+                            <path d="M6 10.5a.75.75 0 01.75.75v1.5a5.25 5.25 0 0010.5 0v-1.5a.75.75 0 011.5 0v1.5a6.75 6.75 0 01-6 6.709v2.291h3a.75.75 0 010 1.5h-7.5a.75.75 0 010-1.5h3v-2.291a6.75 6.75 0 01-6-6.709v-1.5A.75.75 0 016 10.5z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="answerStyle">Mentor Tone / Style:</label>
+                    <div class="flex flex-wrap gap-2 tone-selector">
+                        <button class="tone-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350 active-tone" data-tone="a pastoral, comforting and encouraging way" data-translate-key="pastoral">Pastoral</button>
+                        <button class="tone-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-tone="a deep theological, analytical, and scriptural research method" data-translate-key="deepSearch">Deep Search</button>
+                        <button class="tone-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-tone="a simple, easy-to-understand way with examples for children" data-translate-key="forKids">For Kids</button>
+                        <button class="tone-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-tone="a relatable, modern, and practical way for youth" data-translate-key="forYouths">For Youths</button>
+                    </div>
+                </div>
+                
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="langForAnswer">Language for response:</label>
+                    <div class="flex flex-wrap gap-2 language-selector" data-tool="bible-search">
+                        <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350 active-lang" data-lang="en-US">English</button>
+                        <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="hi-IN">हिन्दी (Hindi)</button>
+                        <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="ta-IN">தமிழ் (Tamil)</button>
+                        <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="te-IN">తెలుగు (Telugu)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <button id="get-answer-btn" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-3 px-8 rounded-2xl transition shadow-lg shadow-emerald-500/20 text-sm" data-translate-key="getAnswer">Get Answer</button>
+            </div>
+
+            <!-- Answer Section -->
+            <div id="answer-container" class="hidden space-y-3 p-5 bg-slate-50 dark:bg-slate-850 rounded-2xl border border-slate-100 dark:border-slate-800 relative animate-fade-in">
+                <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-700 pb-2">
+                    <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="answer">Mentorship Advice</h3>
+                    <div class="flex gap-2">
+                        <!-- Speak response -->
+                        <button id="read-aloud-btn" class="p-1 rounded bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 hover:scale-105 transition active:scale-95" title="Read Aloud">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                                <path fill-rule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zM8 5.5a1 1 0 00-1.414 1.414L8.172 8.5H4a1 1 0 000 2h4.172l-1.586 1.586a1 1 0 101.414 1.414l3.25-3.25a1 1 0 000-1.414L8 5.5z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div id="answer" class="text-slate-800 dark:text-slate-200 prose dark:prose-invert max-w-none text-sm leading-relaxed overflow-x-auto space-y-4">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- 2. AI Sermon Builder Template -->
+    <template id="sermon-builder-template">
+        <div class="space-y-5 p-1">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-4">
+                <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 main-title" data-translate-key="sermonBuilder">AI Sermon Builder</h2>
+                <button class="history-btn flex items-center gap-1.5 text-xs font-bold text-shepherd-600 dark:text-shepherd-400 hover:underline active:scale-95" data-tool="sermon">
+                    <span data-translate-key="historyButton">📜 Outlines History</span>
+                </button>
+            </div>
+
+            <div class="space-y-2">
+                <label for="sermon-topic" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="sermonTopic">Sermon topic, scripture reference, or main theme:</label>
+                <div class="relative">
+                    <input type="text" id="sermon-topic" class="w-full p-3 pr-12 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm bg-slate-50 dark:bg-slate-850 text-slate-850 dark:text-slate-150 focus:outline-none focus:ring-2 focus:ring-shepherd-500 transition" placeholder="e.g., John 3:16, Faith Over Fear, The Grace of God">
+                    <button id="mic-sermon" class="mic-btn absolute top-1/2 right-3 -translate-y-1/2 p-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-full transition active:scale-90" title="Voice Input">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                            <path d="M8.25 4.5a3.75 3.75 0 117.5 0v8.25a3.75 3.75 0 11-7.5 0V4.5z" />
+                            <path d="M6 10.5a.75.75 0 01.75.75v1.5a5.25 5.25 0 0010.5 0v-1.5a.75.75 0 011.5 0v1.5a6.75 6.75 0 01-6 6.709v2.291h3a.75.75 0 010 1.5h-7.5a.75.75 0 010-1.5h3v-2.291a6.75 6.75 0 01-6-6.709v-1.5A.75.75 0 016 10.5z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="langForSermon">Sermon Language:</label>
+                <div class="flex flex-wrap gap-2 language-selector" data-tool="sermon">
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350 active-lang" data-lang="en-US">English</button>
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="hi-IN">हिन्दी (Hindi)</button>
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="ta-IN">தமிழ் (Tamil)</button>
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="te-IN">తెలుగు (Telugu)</button>
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <button id="generate-sermon-btn" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 active:scale-95 text-white font-bold py-3 px-8 rounded-2xl transition shadow-lg shadow-sky-500/20 text-sm" data-translate-key="generateSermon">Generate Sermon Outline</button>
+            </div>
+
+            <div id="sermon-container" class="hidden space-y-3 p-5 bg-slate-50 dark:bg-slate-850 rounded-2xl border border-slate-100 dark:border-slate-800 relative animate-fade-in">
+                <div class="border-b border-slate-200 dark:border-slate-700 pb-2 flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="sermonOutline">Sermon Outline</h3>
+                    <button id="copy-sermon-btn" class="text-xs font-bold text-sky-600 dark:text-sky-400 hover:underline">Copy Outline</button>
+                </div>
+                <div id="sermon-content" class="text-slate-800 dark:text-slate-200 prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-4">
+                    <!-- Dynamic Outline -->
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 3. Bible Quiz Template -->
+    <template id="quiz-template">
+        <div class="space-y-6 p-1">
+            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 text-center main-title border-b border-slate-100 dark:border-slate-800 pb-4" data-translate-key="quizTitle">Bible Knowledge Challenge</h2>
+            
+            <!-- Intro View -->
+            <div id="quiz-intro" class="max-w-md mx-auto text-center space-y-5 py-4">
+                <div class="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto text-amber-500 text-3xl shadow-inner border border-amber-500/20">🏆</div>
+                <div class="space-y-2">
+                    <p id="quiz-intro-text" class="text-sm text-slate-600 dark:text-slate-400" data-translate-key="quizIntro">
+                        Test your Bible knowledge and unlock official completion certificates signed by Dr. Sam Hutson Wallace! Enter your name to begin.
+                    </p>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="space-y-1 text-left">
+                        <label for="quiz-user-name" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Your Full Name (for Certificate)</label>
+                        <input type="text" id="quiz-user-name" class="w-full p-3 border border-slate-200 dark:border-slate-800 rounded-xl text-sm bg-slate-50 dark:bg-slate-850 text-slate-850 dark:text-slate-150 focus:outline-none focus:ring-2 focus:ring-amber-500 transition" placeholder="e.g., Samuel Jackson">
+                    </div>
+
+                    <div class="space-y-1 text-left">
+                        <label for="quiz-level-select" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide" data-translate-key="selectLevel">Difficulty Level</label>
+                        <select id="quiz-level-select" class="w-full p-3 border border-slate-200 dark:border-slate-800 rounded-xl text-sm bg-slate-50 dark:bg-slate-850 text-slate-850 dark:text-slate-150 focus:outline-none focus:ring-2 focus:ring-amber-500 transition cursor-pointer">
+                            <option value="1">Level 1: General Biblical Knowledge</option>
+                            <option value="2">Level 2: The Gospels & Parables</option>
+                            <option value="3">Level 3: Prophets & Covenants</option>
+                            <option value="4">Level 4: Epistles & Theology (Expert)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button id="start-quiz-btn" class="w-full bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold py-3 px-8 rounded-2xl transition shadow-lg shadow-amber-500/20 text-sm" data-translate-key="startQuiz">Start Quiz</button>
+                </div>
+            </div>
+
+            <!-- Quiz Running Container -->
+            <div id="quiz-container" class="hidden max-w-xl mx-auto p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 space-y-4 animate-fade-in">
+                <div class="flex justify-between items-center pb-2 border-b border-slate-200 dark:border-slate-700">
+                    <div id="quiz-level" class="font-bold text-shepherd-600 dark:text-shepherd-400 text-sm">Level 1</div>
+                    <div id="quiz-timer" class="text-xs font-extrabold text-rose-500 dark:text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-lg">Time: 15s</div>
+                </div>
+                
+                <!-- Progress bar -->
+                <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                    <div id="progress-bar" class="bg-amber-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                
+                <!-- Question -->
+                <div id="quiz-question" class="text-base font-bold text-slate-800 dark:text-slate-100 text-center leading-snug py-2">
+                    <!-- Dynamic Question -->
+                </div>
+                
+                <!-- Multiple Choice Options -->
+                <div id="quiz-options" class="grid grid-cols-1 gap-3 py-2">
+                    <!-- Dynamic Options -->
+                </div>
+                
+                <div id="quiz-feedback" class="mt-2 text-sm font-semibold text-center py-1 rounded-xl hidden animate-pulse"></div>
+                
+                <div class="text-center pt-2">
+                    <button id="next-question-btn" class="hidden bg-shepherd-600 hover:bg-shepherd-700 active:scale-95 text-white font-bold py-2.5 px-6 rounded-xl text-xs transition shadow-md" data-translate-key="nextQuestion">Next Question</button>
+                </div>
+            </div>
+
+            <!-- Level Complete Certificate view -->
+            <div id="level-complete-view" class="hidden max-w-xl mx-auto text-center space-y-5 py-4 animate-fade-in">
+                <div class="space-y-1">
+                    <h3 class="text-2xl font-black text-emerald-600 dark:text-emerald-400 main-title" data-translate-key="levelComplete">Level Complete!</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400" data-translate-key="certMessage">Glory to God! You have passed the study verification. Upload a profile image to complete your certificate.</p>
+                </div>
+
+                <div class="flex flex-col items-center gap-4 bg-slate-50 dark:bg-slate-850 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-sm mx-auto">
+                    <label for="cert-image-upload" class="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wide cursor-pointer hover:text-shepherd-500 transition">
+                        Select Photo (Optional)
+                    </label>
+                    <input type="file" id="cert-image-upload" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-shepherd-50 file:text-shepherd-700 hover:file:bg-shepherd-100 cursor-pointer">
+                </div>
+
+                <div class="overflow-x-auto py-2">
+                    <canvas id="certificate-canvas" class="mx-auto border-4 border-amber-500/50 rounded-2xl bg-amber-50 shadow-lg max-w-full" width="600" height="420"></canvas>
+                </div>
+
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-3 pt-2">
+                    <a id="download-cert-btn" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-3 px-6 rounded-2xl text-xs transition shadow-md text-center cursor-pointer" data-translate-key="downloadCert">Download Certificate</a>
+                    <button id="next-level-btn" class="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold py-3 px-6 rounded-2xl text-xs transition shadow-md" data-translate-key="startNextLevel">Unlock Next Level</button>
+                </div>
+            </div>
+
+        </div>
+    </template>
+
+    <!-- 4. Worship Songwriter Template -->
+    <template id="songwriter-template">
+        <div class="space-y-5 p-1">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-4">
+                <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 main-title" data-translate-key="songwriter">Worship Songwriter</h2>
+                <button class="history-btn flex items-center gap-1.5 text-xs font-bold text-shepherd-600 dark:text-shepherd-400 hover:underline active:scale-95" data-tool="songwriter">
+                    <span data-translate-key="historyButton">📜 Songs History</span>
+                </button>
+            </div>
+
+            <div class="space-y-2">
+                <label for="song-description" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="songDesc">Describe theme, tempo, mood, or bibical narrative:</label>
+                <textarea id="song-description" rows="3" class="w-full p-3 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm bg-slate-50 dark:bg-slate-850 text-slate-850 dark:text-slate-150 focus:outline-none focus:ring-2 focus:ring-rose-500 transition leading-relaxed" placeholder="e.g., A quiet contemporary worship song about finding redemption, starting with grief and resolving in overwhelming gratitude and joy. Include references to Psalm 23."></textarea>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="langForLyrics">Song Lyrics Language:</label>
+                <div class="flex flex-wrap gap-2 language-selector" data-tool="songwriter">
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350 active-lang" data-lang="en-US">English</button>
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="hi-IN">हिन्दी (Hindi)</button>
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="ta-IN">தமிழ் (Tamil)</button>
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="te-IN">తెలుగు (Telugu)</button>
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <button id="generate-lyrics-btn" class="w-full sm:w-auto bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold py-3 px-8 rounded-2xl transition shadow-lg shadow-rose-500/20 text-sm" data-translate-key="generateLyrics">Generate Lyrics & Chords</button>
+            </div>
+
+            <div id="lyrics-container" class="hidden space-y-3 p-5 bg-slate-50 dark:bg-slate-850 rounded-2xl border border-slate-100 dark:border-slate-800 relative animate-fade-in">
+                <div class="border-b border-slate-200 dark:border-slate-700 pb-2 flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Song Sheet</h3>
+                    <button id="copy-lyrics-btn" class="text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline">Copy Song</button>
+                </div>
+                <div id="lyrics-content" class="text-slate-800 dark:text-slate-200 prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-4 font-mono">
+                    <!-- Dynamic Lyrics -->
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 5. Missionary Biography Template -->
+    <template id="missionary-template">
+        <div class="space-y-5 p-1">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-4">
+                <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 main-title" data-translate-key="missionaryBio">Missionary Biography</h2>
+                <button class="history-btn flex items-center gap-1.5 text-xs font-bold text-shepherd-600 dark:text-shepherd-400 hover:underline active:scale-95" data-tool="missionary">
+                    <span data-translate-key="historyButton">📜 Bio History</span>
+                </button>
+            </div>
+
+            <div class="space-y-2">
+                <label for="missionary-search" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="servantName">Servant of God's Name:</label>
+                <div class="relative">
+                    <input type="text" id="missionary-search" class="w-full p-3 pr-12 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm bg-slate-50 dark:bg-slate-850 text-slate-850 dark:text-slate-150 focus:outline-none focus:ring-2 focus:ring-shepherd-500 transition" placeholder="e.g., Amy Carmichael, Gladys Aylward, Jim Elliot...">
+                    <button id="mic-missionary" class="mic-btn absolute top-1/2 right-3 -translate-y-1/2 p-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-full transition active:scale-90" title="Voice Input">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                            <path d="M8.25 4.5a3.75 3.75 0 117.5 0v8.25a3.75 3.75 0 11-7.5 0V4.5z" />
+                            <path d="M6 10.5a.75.75 0 01.75.75v1.5a5.25 5.25 0 0010.5 0v-1.5a.75.75 0 011.5 0v1.5a6.75 6.75 0 01-6 6.709v2.291h3a.75.75 0 010 1.5h-7.5a.75.75 0 010-1.5h3v-2.291a6.75 6.75 0 01-6-6.709v-1.5A.75.75 0 016 10.5z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="langForBio">Biography Language:</label>
+                <div class="flex flex-wrap gap-2 language-selector" data-tool="missionary">
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350 active-lang" data-lang="en-US">English</button>
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="hi-IN">हिन्दी (Hindi)</button>
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="ta-IN">தமிழ் (Tamil)</button>
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="te-IN">తెలుగు (Telugu)</button>
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <button id="search-missionary-btn" class="w-full sm:w-auto bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-bold py-3 px-8 rounded-2xl transition shadow-lg shadow-teal-500/20 text-sm" data-translate-key="search">Find Biography</button>
+            </div>
+
+            <div id="missionary-container" class="hidden space-y-3 p-5 bg-slate-50 dark:bg-slate-850 rounded-2xl border border-slate-100 dark:border-slate-800 relative overflow-hidden animate-fade-in">
+                <div class="border-b border-slate-200 dark:border-slate-700 pb-2">
+                    <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="biography">Biography Details</h3>
+                </div>
+                <div id="missionary-content" class="text-slate-800 dark:text-slate-200 prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-4">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 6. Find Your Calling Assessment Template -->
+    <template id="calling-template">
+        <div class="space-y-5 p-1">
+            <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 text-center main-title border-b border-slate-100 dark:border-slate-800 pb-4" data-translate-key="findYourCalling">Spiritual Calling & Gifts Assessment</h2>
+
+            <div id="calling-container" class="max-w-xl mx-auto p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 space-y-5 transition-all">
+                <!-- Questionnaire Stage -->
+                <div id="calling-quiz-stage" class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span id="calling-progress" class="text-xs font-bold text-shepherd-500 uppercase tracking-wider">Question 1 of 8</span>
+                        <div class="w-24 bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full">
+                            <div id="calling-progress-bar" class="bg-shepherd-500 h-1.5 rounded-full transition-all duration-300" style="width: 12.5%"></div>
+                        </div>
+                    </div>
+
+                    <p id="calling-question" class="text-base font-bold text-slate-800 dark:text-slate-100 leading-snug">
+                        <!-- Dynamic assessment question -->
+                    </p>
+
+                    <div id="calling-options" class="grid grid-cols-1 gap-3 py-1">
+                        <!-- Dynamic options -->
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2">
+                        <button id="prev-calling-btn" class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold py-2 px-5 rounded-xl text-xs transition active:scale-95" data-translate-key="callingPrevious">Previous</button>
+                        <button id="next-calling-btn" class="bg-shepherd-600 hover:bg-shepherd-700 text-white font-bold py-2 px-5 rounded-xl text-xs transition active:scale-95 shadow-md shadow-shepherd-500/10" data-translate-key="callingNext">Next</button>
+                    </div>
+                </div>
+
+                <!-- Analysis/Results Stage -->
+                <div id="calling-analysis" class="hidden space-y-6 animate-fade-in">
+                    <div class="text-center space-y-2 pb-4 border-b border-slate-200 dark:border-slate-700">
+                        <div class="text-3xl">🕊️</div>
+                        <h3 class="text-xl font-bold text-slate-850 dark:text-slate-100 main-title">Your Calling Dashboard</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Based on your spiritual service attributes, here is your primary gifts profile.</p>
+                    </div>
+
+                    <!-- Gift Chart representation (pure CSS) -->
+                    <div class="space-y-3">
+                        <h4 class="text-xs font-extrabold uppercase text-slate-500 tracking-wider">Gifts Distribution</h4>
+                        <div id="calling-chart-bars" class="space-y-3 bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                            <!-- Injected bars here -->
+                        </div>
+                    </div>
+
+                    <!-- AI generated or local core response -->
+                    <div id="calling-analysis-text" class="text-slate-800 dark:text-slate-200 prose dark:prose-invert text-sm leading-relaxed max-w-none space-y-4">
+                        <!-- Detailed descriptive guidance -->
+                    </div>
+
+                    <div class="text-center pt-2 border-t border-slate-200 dark:border-slate-700">
+                        <button id="restart-calling-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl text-xs transition active:scale-95 shadow-md">Retake Assessment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- 7. Life Situation Guidance Template -->
+    <template id="life-situation-template">
+        <div class="space-y-5 p-1">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-4">
+                <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 main-title" data-translate-key="lifeSituationGuidance">Life Situation Guidance</h2>
+                <button class="history-btn flex items-center gap-1.5 text-xs font-bold text-shepherd-600 dark:text-shepherd-400 hover:underline active:scale-95" data-tool="lifeSituation">
+                    <span data-translate-key="historyButton">📜 Support History</span>
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <label for="life-situation" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="selectSituation">What matches your current condition or challenge?</label>
+                <select id="life-situation" class="w-full p-3.5 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm bg-slate-50 dark:bg-slate-850 text-slate-800 dark:text-slate-150 focus:outline-none focus:ring-2 focus:ring-purple-500 transition cursor-pointer">
+                    <optgroup label="Emotions & Feelings">
+                        <option value="Anxiety & Worry">Anxiety & Worry</option>
+                        <option value="Anger & Frustration">Anger & Frustration</option>
+                        <option value="Apathy & Numbness">Apathy & Numbness</option>
+                        <option value="Bitterness & Resentment">Bitterness & Resentment</option>
+                        <option value="Burnout & Exhaustion">Burnout & Exhaustion</option>
+                        <option value="Confusion">Confusion</option>
+                        <option value="Depression & Sadness">Depression & Sadness</option>
+                        <option value="Fear">Fear</option>
+                        <option value="Grief & Loss">Grief & Loss</option>
+                        <option value="Guilt & Shame">Guilt & Shame</option>
+                        <option value="Loneliness">Loneliness</option>
+                        <option value="Overwhelm">Feeling Overwhelmed</option>
+                        <option value="Stress">Stress</option>
+                    </optgroup>
+                    <optgroup label="Relationships & Family">
+                        <option value="Conflict Resolution">Conflict Resolution</option>
+                        <option value="Divorce">Divorce & Separation</option>
+                        <option value="Family Problems">Family Problems</option>
+                        <option value="Forgiving Others">Forgiving Others</option>
+                        <option value="Friendship Issues">Friendship Issues</option>
+                        <option value="Love & Marriage">Love & Marriage</option>
+                        <option value="Parenting Challenges">Parenting Challenges</option>
+                        <option value="Singleness">Singleness</option>
+                        <option value="Toxic Relationships">Toxic Relationships</option>
+                    </optgroup>
+                    <optgroup label="Personal Growth & Character">
+                        <option value="Decision Making">Decision Making</option>
+                        <option value="Discipline (Self-Control)">Discipline (Self-Control)</option>
+                        <option value="Finding Purpose">Finding Purpose</option>
+                        <option value="Gratitude">Gratitude</option>
+                        <option value="Identity in Christ">Identity in Christ</option>
+                        <option value="Laziness & Procrastination">Laziness & Procrastination</option>
+                        <option value="Perseverance">Perseverance</option>
+                    </optgroup>
+                    <optgroup label="Life Challenges & Decisions">
+                        <option value="Addiction">Addiction & Dependency</option>
+                        <option value="Career & Work">Career & Work Decisions</option>
+                        <option value="Crisis of Faith">Crisis of Faith</option>
+                        <option value="Debt & Financial Trouble">Debt & Financial Trouble</option>
+                        <option value="Failure & Mistakes">Failure & Mistakes</option>
+                        <option value="Facing Injustice">Facing Injustice</option>
+                        <option value="Health & Sickness">Health & Sickness</option>
+                        <option value="Job Loss">Job Loss / Unemployment</option>
+                        <option value="Major Life Changes">Major Life Changes</option>
+                        <option value="Uncertainty about the Future">Uncertainty about the Future</option>
+                    </optgroup>
+                    <optgroup label="Spiritual Life">
+                        <option value="Backsliding & Spiritual Dryness">Backsliding & Spiritual Dryness</option>
+                        <option value="Bible Study (Struggling with)">Bible Study (Struggling with)</option>
+                        <option value="Hearing God's Voice">Hearing God's Voice</option>
+                        <option value="Prayer (Struggling with)">Prayer (Struggling with)</option>
+                        <option value="Spiritual Warfare">Spiritual Warfare</option>
+                        <option value="Worship">Worship</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="langForGuidance">Guidance Language:</label>
+                <div class="flex flex-wrap gap-2 language-selector" data-tool="life-situation">
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350 active-lang" data-lang="en-US">English</button>
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="hi-IN">हिन्दी (Hindi)</button>
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="ta-IN">தமிழ் (Tamil)</button>
+                    <button class="lang-btn py-1.5 px-3 rounded-full text-xs font-bold bg-slate-150 dark:bg-slate-800 hover:bg-slate-200 active:scale-95 text-slate-700 dark:text-slate-350" data-lang="te-IN">తెలుగు (Telugu)</button>
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <button id="get-support-btn" class="w-full sm:w-auto bg-purple-650 hover:bg-purple-750 active:scale-95 text-white font-bold py-3 px-8 rounded-2xl transition shadow-lg shadow-purple-500/20 text-sm" data-translate-key="getSupport">Get Support</button>
+            </div>
+
+            <div id="support-container" class="hidden space-y-3 p-5 bg-slate-50 dark:bg-slate-850 rounded-2xl border border-slate-100 dark:border-slate-800 relative animate-fade-in">
+                <div class="border-b border-slate-200 dark:border-slate-700 pb-2">
+                    <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-translate-key="guidance">Biblical Encouragement & Guidance</h3>
+                </div>
+                <div id="support-content" class="text-slate-800 dark:text-slate-200 prose dark:prose-invert max-w-none text-sm leading-relaxed space-y-4">
+                    <!-- Dynamic supportive advice -->
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Script assets -->
+    <script src="translations.js" defer></script>
+    <script src="app.js" defer></script>
+</body>
+</html>
