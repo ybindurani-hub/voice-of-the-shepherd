@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const appState = {
         currentView: 'home-view',
         language: localStorage.getItem('vos_language') || 'en-US',
-        apiKey: localStorage.getItem('vos_api_key') || 'AIzaSyDwKFMm9b_9RmnpLeTBiGLKD9ADpbvpGqw',
-        defaultApiKey: 'AIzaSyDwKFMm9b_9RmnpLeTBiGLKD9ADpbvpGqw',
+        apiKey: localStorage.getItem('vos_api_key') || '',
+        defaultApiKey: '',
         theme: localStorage.getItem('theme') || 'light',
         challengeCompleted: localStorage.getItem('vos_challenge_completed') === new Date().toDateString(),
         
@@ -212,6 +212,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Load API key placeholder
         elements.settingsApiKey.value = appState.apiKey;
+
+        // Auto-open settings modal if API key is not yet set
+        if (!appState.apiKey || appState.apiKey === "") {
+            setTimeout(() => {
+                elements.settingsModal.classList.remove('hidden');
+                showToast("Please enter a Gemini API Key to enable AI features");
+            }, 600);
+        }
     }
 
     // --- TRANSLATION AND LOCALIZATION ENGINE ---
@@ -691,7 +699,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- GEMINI API CALLS AND RENDERING ---
     async function fetchGeminiAIResponse(systemPrompt, userPrompt, maxTokens = 800) {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${appState.apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${appState.apiKey}`;
         
         const requestBody = {
             contents: [
