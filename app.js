@@ -526,10 +526,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         elements.missionaryWeekBtn.addEventListener('click', () => {
             showView('missionary-view');
+            const currentName = elements.missionaryName.textContent.trim();
             setTimeout(() => {
                 const searchInput = document.getElementById('missionary-search');
                 if (searchInput) {
-                    searchInput.value = "Hudson Taylor";
+                    searchInput.value = currentName;
                     document.getElementById('search-missionary-btn').click();
                 }
             }, 100);
@@ -731,28 +732,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function parseMarkdownToHTML(mdText) {
         if (!mdText) return "";
-        let html = mdText
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/^\s*&gt;\s+(.*)$/gm, '<blockquote>$1</blockquote>')
-            .replace(/^\#\#\#\s+(.*)$/gm, '<h3>$1</h3>')
-            .replace(/^\#\#\s+(.*)$/gm, '<h2>$1</h2>')
-            .replace(/^\#\s+(.*)$/gm, '<h1>$1</h1>')
-            .replace(/\*\*(.*?)\*\?/g, '<strong>$1</strong>') // Handle bold/italic
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/`(.*?)`/g, '<code>$1</code>')
-            .replace(/^\s*-\s+(.*)$/gm, '<li>$1</li>')
-            .replace(/^\s*\*\s+(.*)$/gm, '<li>$1</li>')
-            .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
-            .replace(/\n\n/g, '</p><p>')
-            .replace(/\n/g, '<br>');
-
-        if (!html.startsWith('<h') && !html.startsWith('<p') && !html.startsWith('<blockquote') && !html.startsWith('<ul')) {
-            html = '<p>' + html + '</p>';
+        
+        let lines = mdText.split('\n');
+        let htmlLines = [];
+        let inList = false;
+        
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            
+            // Handle blockquotes
+            if (line.startsWith('>') || line.startsWith('&gt;')) {
+                const quoteText = line.replace(/^(&gt;|>)/, '').trim();
+                line = `<blockquote>${quoteText}</blockquote>`;
+            }
+            // Handle Headers
+            else if (line.startsWith('###')) {
+                line = `<h3>${line.substring(3).trim()}</h3>`;
+            } else if (line.startsWith('##')) {
+                line = `<h2>${line.substring(2).trim()}</h2>`;
+            } else if (line.startsWith('#')) {
+                line = `<h1>${line.substring(1).trim()}</h1>`;
+            }
+            // Handle Bullet list items
+            else if (line.startsWith('-') || line.startsWith('*')) {
+                if (!inList) {
+                    htmlLines.push('<ul>');
+                    inList = true;
+                }
+                line = `<li>${line.substring(1).trim()}</li>`;
+            } else {
+                if (inList) {
+                    htmlLines.push('</ul>');
+                    inList = false;
+                }
+                if (line !== '') {
+                    line = `<p>${line}</p>`;
+                }
+            }
+            
+            // Inline styling (Bold, Italic, Code)
+            line = line
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/`(.*?)`/g, '<code>$1</code>');
+                
+            if (line !== '' || inList) {
+                htmlLines.push(line);
+            }
         }
-        return html;
+        
+        if (inList) {
+            htmlLines.push('</ul>');
+        }
+        
+        return htmlLines.join('\n');
     }
 
     function toggleLoader(show, textKey = 'loaderText') {
@@ -973,7 +1006,11 @@ Structure: Verse 1, Chorus, Verse 2, Bridge, Chorus/Outro.`;
         const lang = appState.language;
         
         // **CREDIT OPTIMIZATION**: Always check local profiles first (100% free of quota)
-        const matchedKey = Object.keys(missionaryData).find(k => query.includes(k) || k.includes(query));
+        const cleanQuery = query.replace(/[ü]/g, 'u').trim();
+        const matchedKey = Object.keys(missionaryData).find(k => {
+            const cleanK = k.replace(/[ü]/g, 'u');
+            return cleanQuery.includes(cleanK) || cleanK.includes(cleanQuery);
+        });
         if (matchedKey && lang === 'en-US') {
             renderBio(missionaryData[matchedKey].bio, "Local Profile (No Quota)");
             return;
